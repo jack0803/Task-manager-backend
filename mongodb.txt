@@ -1,0 +1,141 @@
+//CRUD operation code
+//for reference use : www.mongodb.com/docs/manual/reference/method/
+import mongodb from "mongodb";
+//this module provide authentication , verification and object mapping and many more functionalities
+import mongoose from 'mongoose';
+
+//mongodbClient provides the function which require to establish connection with mongodb
+const mongoClient = mongodb.MongoClient;
+//this library helps to create document id in database  and also use for destructuring
+const ObjectID = mongodb.ObjectId;
+
+
+//databse connection URL
+//here we provide localhost ip = 127.0.0.1 instead of localhost word because it has some issues with it.
+const connectionURL = "mongodb://127.0.0.1:27017";
+//database name what ever you want to give
+const databaseName = "task-manager";
+
+mongoClient.connect(connectionURL,{ useNewUrlParser: true },(error, client) => {
+    //inside callback
+    if (error) {
+      return console.log("unable to connect to database!");
+    }
+    const db = client.db(databaseName);
+  
+    
+    db.collection("users").updateOne(
+          {
+            _id: new ObjectID("639de64b4c36c593cb3c2447"),
+          },
+          {
+          //increment
+          $inc: {
+            age: 1,
+          },
+        }).then((result) => {
+          console.log(result);
+        }).catch((error) => {
+        console.log(error);
+      });
+      
+      db.collection("tasks").updateMany(
+        {
+          status: false,
+        },
+        {
+          $set: {
+            status: true,
+          },
+        }).then((result) => {
+        console.log(result.modifiedCount);
+      }).catch((error) => {
+        console.log(error);
+      });
+      
+    console.log("connected successfully!");
+  });
+  
+  //creating ID in our OWN manner
+  // const id = ObjectID()
+  // console.log(id);
+  //buffer
+  // console.log(id.id);
+  // console.log(id.id.length);
+  // console.log(id.toHexString());
+  // console.log(id.toHexString().length);
+  //new ObjectId("639df0f9792ee8de4873561a") output of upper log
+  //visit: https://www.mongodb.com/docs/manual/reference/method/ObjectId/
+  
+  //Returns the timestamp portion of the ObjectId() as a Date.
+  //you can use it by following manner also : ObjectId("507c7f79bcf86cd7994f6c0e").getTimestamp()
+  // console.log(id.getTimestamp());
+  //in collection method first arrgument is collection name , then we specify the operation (here insertOne)
+  // db.collection('users').insertOne({
+  //     _id: id,
+  //     name: 'jack',
+  //     age: 20
+  // in upgraded version insertone,many doesnot support callback
+  // }
+  // ,(error, result) => {
+  //     if(error){
+    //         return console.log("unable to insert user");
+    //     }
+    //     console.log(result.ops);
+    // }
+  // )
+
+  // db.collection('users').insertMany([
+    //     {name:'jenil' , age: 20},
+    //     {name:'prince' , age: 20}
+    // ])
+    
+    // db.collection('tasks').insertMany([
+      //     {descrition:'make CV', status: true},
+  //     {descrition:'apply for internship', status: false}
+  // ])
+  
+  //find or findOne
+  // const user = db.collection('users').findOne({ _id: new ObjectID("639de64b4c36c593cb3c2447")},(error, user) => {
+    //     if(error){
+      //         return console.log('unable to find user!');
+      //     }
+      //     console.log(user)
+      // })
+      //find method returns an cursor . cursor is not data but it is an set of pointer that points to that perticuler data
+      //so we have to travers that pointers by using next() method
+      // db.collection('user').find({ age: 20} ).toArray((error , users) =>{
+        //     if (error) {
+          //         console.log(error);
+  //     }
+  //     console.log(users);
+  // })
+  
+  // mathod like insert , update will return an promise in the updated version on mongodb we cant use callback
+  //because it was depricated as we did above now we have to handle promises
+  // const updatePromise = db.collection('users').updateOne({
+  //     _id: new ObjectID("639ddfdf9fa7737ce9220755")
+  //    }, {
+    //     //we can't directly change values we have to use operators to update values
+    //     $set: {
+      //     name: "dhruv"
+  //     }
+  //    })
+  //    updatePromise.then((result) => {
+  //     console.log(result)
+  //    }).catch((error) => {
+    //     console.log(error)
+    //    })
+    //Direct method without making promise const
+    //    db.collection('users').updateOne({
+      //     _id: new ObjectID("639de01e9eca15e2348fa01d")
+      //    }, {
+        //     //we can't directly change values we have to use operators to update values
+        //     $set: {
+          //     name: "naitik"
+  //     }
+  //    }).then((result) => {
+    //     console.log(result)
+    //    }).catch((error) => {
+      //     console.log(error)
+      //    })
